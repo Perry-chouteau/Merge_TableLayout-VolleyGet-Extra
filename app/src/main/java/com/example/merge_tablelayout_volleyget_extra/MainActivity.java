@@ -98,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             //Mid 1.0
                             Log.d("JsonArray", "|" + "CREDIT TRANSFER" + "|");
-                            //Skip Unvalidated Operation
-                            if (!jsonObject.getString("status").equalsIgnoreCase("Validated"))
+/*Skip Unvalid Operation*/  if (!jsonObject.getString("status").equalsIgnoreCase("Validated"))
                                 continue;
                             //Mid 1.0
                             LayoutInflater I = getLayoutInflater();
@@ -108,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
                             tr.setBackgroundColor(getColor(R.color.white));
                             //Mid 1.5
                             for (int j = 0; j < 3; ++j) {
-                                TextView tmp = (j < 1) ? tr.findViewById(R.id.type): (j < 2) ? tr.findViewById(R.id.amount) : tr.findViewById(R.id.date);
-                                tmp.setText( (j < 1) ? jsonObject.getString("type"): (j < 2) ? jsonObject.getString("amount") + " €" : jsonObject.getString("executionDate") );
+/*choose text view*/            TextView tmp = (j < 1) ? tr.findViewById(R.id.type): (j < 2) ? tr.findViewById(R.id.amount) : tr.findViewById(R.id.date);
+/*set text view*/               tmp.setText( (j < 1) ? jsonObject.getString("type"): (j < 2) ? debitOrCredit(jsonObject) + jsonObject.getString("amount") + " €" : jsonObject.getString("executionDate") );
                             }
                             TextView tmp = tr.findViewById(R.id.type);
-                            tmp.setText(jsonObject.getString("type")/*jsonObject.toString()*/);
+                            tmp.setText(jsonObject.getString("type"));
                             tl.addView(tr);
                         }
                     } catch (JSONException e) {
@@ -138,10 +137,11 @@ public class MainActivity extends AppCompatActivity {
                             //Mid 1.5
                             for (int j = 0; j < 3; ++j) {
                                 TextView tmp = (j < 1) ? tr.findViewById(R.id.type) : (j < 2) ? tr.findViewById(R.id.amount) : tr.findViewById(R.id.date);
-                                tmp.setText((j < 1) ? jsonObject.getString("type") : (j < 2) ? jsonObject.getString("amount") + " €" : jsonObject.getString("executionDate"));
+                                tmp.setText((j < 1) ? jsonObject.getString("type") : (j < 2) ? debitOrCredit(jsonObject) + jsonObject.getString("amount") + " €" : jsonObject.getString("executionDate"));
+                                //Credit or Debit
                             }
                             TextView tmp = tr.findViewById(R.id.type);
-                            tmp.setText(jsonObject.getString("type")/*jsonObject.toString()*/);
+                            tmp.setText(jsonObject.getString("type"));
                             tl.addView(tr);
                         }
                     } catch (JSONException e) {
@@ -167,6 +167,10 @@ public class MainActivity extends AppCompatActivity {
         );
         queue.add(stringRequest);
     }
+    private String debitOrCredit(JSONObject jsonObject) throws JSONException {
+        return (jsonObject.getString("direction").equalsIgnoreCase("DEBIT")) ? "-" : "";
+    }
+
     // ------------------- sorting JsonArray --------------------
     private JSONArray sortJsonArray(JSONArray jsonArray) {
         return jsonArray;
