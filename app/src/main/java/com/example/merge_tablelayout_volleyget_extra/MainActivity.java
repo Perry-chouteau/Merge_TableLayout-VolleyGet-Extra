@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -47,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
         });
         //next
     }
-
-    //init
+    // ------------------- initDefaultApp --------------------
      private void initDefaultApp(Bundle savedInstanceState) {
          Log.d("HERE", "initDefaultApp");
          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
+    // ------------------- initDefaultTableLayout --------------------
     private void initDefaultTableLayout(Bundle savedInstanceState) {
         Log.d("HERE", "initDefaultTableLayout");
         LayoutInflater I = getLayoutInflater();
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    //button
+    // ------------------- Handle Get Request --------------------
     private void createTableRowFromVolley(View view) {
         Log.d("HERE", "searchForData");
         //Url
@@ -97,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             //Mid 1.0
                             Log.d("JsonArray", "|" + "CREDIT TRANSFER" + "|");
-                            // ---------------- SKIP UNVALIDETED OPERATION
-                            if (jsonObject.getString("status").charAt(0) != 'V')
+                            //Skip Unvalidated Operation
+                            if (!jsonObject.getString("status").equalsIgnoreCase("Validated"))
                                 continue;
                             //Mid 1.0
                             LayoutInflater I = getLayoutInflater();
@@ -117,81 +118,54 @@ public class MainActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                } /*else if (response.charAt(0) == '{') { // It's a jsonObject ?
+                } else if (response.charAt(0) == '{') { // It's a jsonObject ?
                     Log.d("TYPE", "It's a jsonObject !");
                     // translate string to JsonObject & put it in a textView
+
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        //textView.setText(jsonObject.toString());
-                        tl.addView(tr);
-
+                        TableLayout tl = findViewById(R.id.tableLayout);
+                        tl.removeAllViews();
+                        //Mid 1.0
+                        Log.d("JsonArray", "|" + "CREDIT TRANSFER" + "|");
+                        // ---------------- SKIP UNVALIDETED OPERATION
+                        if (jsonObject.getString("status").equalsIgnoreCase("Validated")) {
+                            //Mid 1.0
+                            LayoutInflater I = getLayoutInflater();
+                            View v = I.inflate(R.layout.fragment_display__json_values, null); //inflate slideLayout in a view
+                            TableRow tr = v.findViewById(R.id.tableRow); // TableRow = swipeLayout from xml Files keep inflate in vie
+                            tr.setBackgroundColor(getColor(R.color.white));
+                            //Mid 1.5
+                            for (int j = 0; j < 3; ++j) {
+                                TextView tmp = (j < 1) ? tr.findViewById(R.id.type) : (j < 2) ? tr.findViewById(R.id.amount) : tr.findViewById(R.id.date);
+                                tmp.setText((j < 1) ? jsonObject.getString("type") : (j < 2) ? jsonObject.getString("amount") + " €" : jsonObject.getString("executionDate"));
+                            }
+                            TextView tmp = tr.findViewById(R.id.type);
+                            tmp.setText(jsonObject.getString("type")/*jsonObject.toString()*/);
+                            tl.addView(tr);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     //String
                 } else { // It's a string !
-                    Log.d("TYPE", "It's a String !");
-                    tl.addView(tr);
-                    // no translation & put it in a textView.
-                    //textView.setText(response);
-                }*/
+                    Log.d("TYPE", "It's a String !"); Log.e("TYPE", "It's a String !");
+
+                }
                 //add to Screen
             },error -> {
-            Log.d("HERE", "error");
-            error.printStackTrace();
+                Log.d("HERE", "error");
+                Log.e("ERROR:", error.toString());
+                if (url.length() == 0)
+                Toast.makeText(getBaseContext(), "Write your URL..", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getBaseContext(), "Wrong URL..", Toast.LENGTH_SHORT).show();
             }
         );
         queue.add(stringRequest);
     }
-
+    // ------------------- sorting JsonArray --------------------
     private JSONArray sortJsonArray(JSONArray jsonArray) {
         return jsonArray;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
