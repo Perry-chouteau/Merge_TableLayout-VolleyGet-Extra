@@ -150,16 +150,19 @@ public class MainActivity extends AppCompatActivity {
                     //String
                 } else { // It's a string !
                     Log.d("TYPE", "It's a String !"); Log.e("TYPE", "It's a String !");
-
                 }
                 //add to Screen
             },error -> {
                 Log.d("HERE", "error");
                 Log.e("ERROR:", error.toString());
-                if (url.length() == 0)
-                Toast.makeText(getBaseContext(), "Write your URL..", Toast.LENGTH_SHORT).show();
-                else
+                if (url.length() == 0) {
+                    Log.e("TYPE", "Write your URL..");
+                    Toast.makeText(getBaseContext(), "Write your URL..", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("TYPE", "Wrong URL..");
                     Toast.makeText(getBaseContext(), "Wrong URL..", Toast.LENGTH_SHORT).show();
+
+                }
             }
         );
         queue.add(stringRequest);
